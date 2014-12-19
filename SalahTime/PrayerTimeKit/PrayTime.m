@@ -25,6 +25,8 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 
 #import "PrayTime.h"
 
+NSString * const PTKInvalidTimeString = @"-----";
+
 @interface PrayTime ()
 
 
@@ -33,16 +35,6 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 @implementation PrayTime {
     double JDate;
 }
-
-//@synthesize timeNames;
-//@synthesize InvalidTime;
-//
-//@synthesize numIterations;
-//
-//@synthesize methodParams;
-//
-//@synthesize prayerTimesCurrent;
-//@synthesize offsets;
 
 -(instancetype) init {
 	self = [super init];
@@ -57,8 +49,6 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 		
 		// Time Names
         _timeNames = @[@"Fajr", @"Sunrise", @"Dhuhr", @"Asr", @"Sunset", @"Maghrib", @"Isha"];
-		
-		_InvalidTime = @"-----";	 // The string used for invalid times
 		
 		//--------------------- Technical Settings --------------------
 		
@@ -78,7 +68,6 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
                       ] mutableCopy];
 		
 		/*
-		 
 		 fa : fajr angle
 		 ms : maghrib selector (0 = angle; 1 = minutes after sunset)
 		 mv : maghrib parameter value (in angle or minutes)
@@ -99,7 +88,9 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 	return self;
 }
 
-//---------------------- Trigonometric Functions -----------------------
+//------------------------------------------------------
+#pragma mark - Trigonometric Functions
+//------------------------------------------------------
 
 // range reduce angle in degrees.
 -(double) fixangle: (double) a {
@@ -172,7 +163,9 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 	return [self radiansToDegrees: val];
 }
 
-//---------------------- Time-Zone Functions -----------------------
+//------------------------------------------------------
+#pragma mark - Time-Zone Functions
+//------------------------------------------------------
 
 // compute local time-zone for a specific date
 -(double)getTimeZone {
@@ -197,7 +190,9 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 	return hoursDiff;
 }
 
-//---------------------- Julian Date Functions -----------------------
+//------------------------------------------------------
+#pragma mark - Julian Date Functions
+//------------------------------------------------------
 
 // calculate julian date from a calendar date
 -(double) julianDate: (int)year andMonth:(int)month andDay:(int)day {
@@ -233,7 +228,10 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 	return J1970 + days - 0.5;
 }
 
-//---------------------- Calculation Functions -----------------------
+//------------------------------------------------------
+#pragma mark - Calculation Functions
+//------------------------------------------------------
+
 
 // References:
 // http://www.ummah.net/astronomy/saltime  
@@ -287,7 +285,7 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 	
 	double D = [self sunDeclination:(JDate+ t)];
 	double Z = [self computeMidDay: t];
-	double V = ([self darccos: (-[self dsin:G] - ([self dsin:D] * [self dsin:self.lat]))/ ([self dcos:D] * [self dcos:self.lat])]) / 15.0f;
+	double V = ([self darccos: (-[self dsin:G] - ([self dsin:D] * [self dsin:self.latitude]))/ ([self dcos:D] * [self dcos:self.latitude])]) / 15.0f;
 
 	return Z+ (G>90 ? -V : V);
 }
@@ -296,25 +294,27 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 // Shafii: step=1, Hanafi: step=2
 -(double)computeAsr: (double)step andTime:(double)t {
 	double D = [self sunDeclination:(JDate+ t)];
-	double G = -[self darccot : (step + [self dtan:ABS(self.lat-D)])];
+	double G = -[self darccot : (step + [self dtan:ABS(self.latitude-D)])];
 	return [self computeTime:G andTime:t];
 }
 
-//---------------------- Misc Functions -----------------------
-
+//------------------------------------------------------
+#pragma mark - Misc Functions
+//------------------------------------------------------
 
 // compute the difference between two times 
 -(double)timeDiff:(double)time1 andTime2:(double) time2 {
 	return [self fixhour: (time2- time1)];
 }
 
-//-------------------- Interface Functions --------------------
-
+//------------------------------------------------------
+#pragma mark - Interface(Public) Functions
+//------------------------------------------------------
 
 // return prayer times for a given date
 -(NSMutableArray*)getDatePrayerTimes:(int)year andMonth:(int)month andDay:(int)day andLatitude:(double)latitude andLongitude:(double)longitude andtimeZone:(double)tZone {
-	self.lat = latitude;
-	self.lng = longitude;
+	self.latitude = latitude;
+	self.longitude = longitude;
 	
 	//timeZone = this.effectiveTimeZone(year, month, day, timeZone); 
 	//timeZone = [self getTimeZone];
@@ -389,7 +389,7 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 	NSString *result = nil;
 	
 	if (isnan(time))
-		return self.InvalidTime;
+		return PTKInvalidTimeString;
 	
 	time = [self fixhour:(time + 0.5/ 60.0)];  // add 0.5 minutes to round
 	int hours = floor(time); 
@@ -414,7 +414,7 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 -(NSString*)floatToTime12:(double)time andnoSuffix:(BOOL)noSuffix {
 	
 	if (isnan(time))
-		return self.InvalidTime;
+		return PTKInvalidTimeString;
 	
 	time =[self fixhour:(time+ 0.5/ 60)];  // add 0.5 minutes to round
 	double hours = floor(time); 
@@ -468,8 +468,9 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 	return [self floatToTime12:time andnoSuffix:YES];
 }
 
-//---------------------- Compute Prayer Times -----------------------
-
+//------------------------------------------------------
+#pragma mark - Compute Prayer Times
+//------------------------------------------------------
 
 // compute prayer times at given julian date
 -(NSMutableArray*)computeTimes:(NSMutableArray*)times {
@@ -560,7 +561,7 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 	double time = 0, Dtime, Dtime1, Dtime2;
 	
 	for (i=0; i<7; i++) {
-		time = ([times[i] doubleValue]) + (self.timeZone- self.lng/ 15.0);
+		time = ([times[i] doubleValue]) + (self.timeZone- self.longitude/ 15.0);
 		
 		times[i] = @(time);
 		
@@ -682,10 +683,6 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 		
 	}
 	return times;
-}
-
--(void) dealloc{
-	self.prayerTimesCurrent = nil;
 }
 
 @end

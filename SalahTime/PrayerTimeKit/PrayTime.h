@@ -24,6 +24,9 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 
 #import <Foundation/Foundation.h>
 
+/// The string used for invalid times
+extern NSString * const PTKInvalidTimeString;
+
 typedef NS_ENUM(NSInteger, PTKCalculationMethod) {
     PTKCalculationMethodJafari, // Ithna Ashari
     PTKCalculationMethodKarachi, // University of Islamic Sciences, Karachi
@@ -55,28 +58,11 @@ typedef NS_ENUM (NSInteger, PTKTimeFormat) {
 };
 
 @interface PrayTime : NSObject {
-	
-//	NSMutableArray *timeNames;
-	
-//	NSString *InvalidTime;
-	
-	
-	
-//	NSInteger numIterations;
-	
-	
-	
-//	NSMutableDictionary *methodParams;
-	
-	
-//	NSMutableArray *prayerTimesCurrent;
-//	NSMutableArray *offsets;
+
 }
 
 // Time Names
 @property (readonly) NSArray *timeNames;
-// The string used for invalid times
-@property (readonly) NSString *InvalidTime;
 
 //--------------------- Technical Settings --------------------
 // number of iterations needed to compute times
@@ -101,49 +87,14 @@ typedef NS_ENUM (NSInteger, PTKTimeFormat) {
 @property (assign, nonatomic) double               dhuhrMinutes;
 @property (assign, nonatomic) PTKHigherLatitudes   adjustHighLats;
 @property (assign, nonatomic) PTKTimeFormat        timeFormat;
-@property (assign, nonatomic) double lat;
-@property (assign, nonatomic) double lng;
-@property (assign, nonatomic) double timeZone;
-
-//---------------------- Trigonometric Functions -----------------------
--(double) radiansToDegrees:(double)alpha;
--(double) DegreesToRadians:(double)alpha;
--(double) fixangle: (double)a;
--(double) fixhour: (double)a;
--(double) dsin: (double) d;
--(double) dcos: (double) d;
--(double) dtan: (double) d;
--(double) darcsin: (double) x;
--(double) darccos: (double) x;
--(double) darctan: (double) x;
--(double) darccot: (double) x;
--(double) darctan2: (double)y andX: (double) x;
-
-//---------------------- Time-Zone Functions -----------------------
--(double)getTimeZone;
--(double)getBaseTimeZone;
--(double)detectDaylightSaving;
-
-//---------------------- Julian Date Functions -----------------------
--(double) julianDate: (int)year andMonth:(int)month andDay:(int)day;
--(double)calcJD: (int)year andMonth:(int)month andDay:(int)day;
-
-//---------------------- Calculation Functions -----------------------
--(NSMutableArray*)sunPosition: (double) jd;
--(double)equationOfTime: (double)jd;
--(double)sunDeclination: (double)jd;
--(double)computeMidDay: (double) t;
--(double)computeTime: (double)G andTime: (double)t;
--(double)computeAsr: (double)step andTime:(double)t;
-
-//---------------------- Misc Functions -----------------------
--(double)timeDiff:(double)time1 andTime2:(double) time2;
+@property (assign, nonatomic) double               latitude;
+@property (assign, nonatomic) double               longitude;
+@property (assign, nonatomic) double               timeZone;
 
 //-------------------- Interface Functions --------------------
 -(NSMutableArray*)getDatePrayerTimes:(int)year andMonth:(int)month andDay:(int)day andLatitude:(double)latitude andLongitude:(double)longitude andtimeZone:(double)tZone;
 -(NSMutableArray*)getPrayerTimes: (NSDateComponents*)date andLatitude:(double)latitude andLongitude:(double)longitude andtimeZone:(double)tZone;
-//-(void)setCalcMethod: (int)methodID;
-//-(void)setAsrMethod: (int)methodID;
+
 -(void)setCustomParams: (NSArray*)params;
 -(void)setFajrAngle:(double)angle;
 -(void)setMaghribAngle:(double)angle;
@@ -151,21 +102,9 @@ typedef NS_ENUM (NSInteger, PTKTimeFormat) {
 //-(void)setDhuhrMinutes:(double)minutes;
 -(void)setMaghribMinutes:(double)minutes;
 -(void)setIshaMinutes:(double)minutes;
-//-(void)setHighLatsMethod:(int)methodID;
-//-(void)setTimeFormat: (int)tFormat;
+
 -(NSString*)floatToTime24:(double)time;
 -(NSString*)floatToTime12:(double)time andnoSuffix:(BOOL)noSuffix;
 -(NSString*)floatToTime12NS:(double)time;
-
-//---------------------- Compute Prayer Times -----------------------
--(NSMutableArray*)computeTimes:(NSMutableArray*)times;
--(NSMutableArray*)computeDayTimes;
--(NSMutableArray*)adjustTimes:(NSMutableArray*)times;
--(NSMutableArray*)adjustTimesFormat:(NSMutableArray*)times;
--(NSMutableArray*)adjustHighLatTimes:(NSMutableArray*)times;
--(double)nightPortion:(double)angle;
--(NSMutableArray*)dayPortion:(NSMutableArray*)times;
--(void)tune:(NSMutableDictionary*)offsets;
--(NSMutableArray*)tuneTimes:(NSMutableArray*)times;
 
 @end
