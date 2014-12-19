@@ -26,8 +26,8 @@
      longitude  	= 90.37
      timezone 	= +6
      */
-    [pt setCalcMethod:1];
-    [pt setAsrMethod:1];
+    [pt setCalcMethod:PTKCalculationMethodKarachi];
+    [pt setAsrJuristic:PTKJuristicMethodHanafi];
     NSArray *times = [pt getDatePrayerTimes:2014
                                    andMonth:12
                                      andDay:19
