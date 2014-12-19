@@ -14,6 +14,7 @@
 		3B6E6A141A446A7A00C3CFB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B6E6A131A446A7A00C3CFB6 /* Images.xcassets */; };
 		3B6E6A171A446A7A00C3CFB6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B6E6A151A446A7A00C3CFB6 /* LaunchScreen.xib */; };
 		3B6E6A231A446A7A00C3CFB6 /* SalahTimeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B6E6A221A446A7A00C3CFB6 /* SalahTimeTests.m */; };
+		3B6E6A2F1A446AAF00C3CFB6 /* PrayTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B6E6A2E1A446AAF00C3CFB6 /* PrayTime.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,8 @@
 		3B6E6A1C1A446A7A00C3CFB6 /* SalahTimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SalahTimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B6E6A211A446A7A00C3CFB6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B6E6A221A446A7A00C3CFB6 /* SalahTimeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SalahTimeTests.m; sourceTree = "<group>"; };
+		3B6E6A2D1A446AAF00C3CFB6 /* PrayTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrayTime.h; sourceTree = "<group>"; };
+		3B6E6A2E1A446AAF00C3CFB6 /* PrayTime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrayTime.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 		3B6E6A051A446A7A00C3CFB6 /* SalahTime */ = {
 			isa = PBXGroup;
 			children = (
+				3B6E6A2C1A446A8E00C3CFB6 /* PrayerTimeKit */,
 				3B6E6A0A1A446A7A00C3CFB6 /* AppDelegate.h */,
 				3B6E6A0B1A446A7A00C3CFB6 /* AppDelegate.m */,
 				3B6E6A0D1A446A7A00C3CFB6 /* ViewController.h */,
@@ -117,6 +121,15 @@
 				3B6E6A211A446A7A00C3CFB6 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3B6E6A2C1A446A8E00C3CFB6 /* PrayerTimeKit */ = {
+			isa = PBXGroup;
+			children = (
+				3B6E6A2D1A446AAF00C3CFB6 /* PrayTime.h */,
+				3B6E6A2E1A446AAF00C3CFB6 /* PrayTime.m */,
+			);
+			path = PrayerTimeKit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -219,6 +232,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B6E6A2F1A446AAF00C3CFB6 /* PrayTime.m in Sources */,
 				3B6E6A0F1A446A7A00C3CFB6 /* ViewController.m in Sources */,
 				3B6E6A0C1A446A7A00C3CFB6 /* AppDelegate.m in Sources */,
 				3B6E6A091A446A7A00C3CFB6 /* main.m in Sources */,
