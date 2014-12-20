@@ -68,6 +68,7 @@ NSString * const PTKInvalidTimeString = @"-----";
                       ] mutableCopy];
 		
 		/*
+         self.methodParams[methodNum] = @[fa, ms, mv, is, iv];
 		 fa : fajr angle
 		 ms : maghrib selector (0 = angle; 1 = minutes after sunset)
 		 mv : maghrib parameter value (in angle or minutes)
@@ -101,13 +102,6 @@ NSString * const PTKInvalidTimeString = @"-----";
 	return a;
 }
 
-// range reduce hours to 0..23
--(double) fixhour: (double) a {
-	a = a - 24.0 * floor(a / 24.0);
-	a = a < 0 ? (a + 24) : a;
-	return a;
-}
-
 // radian to degree
 -(double) radiansToDegrees:(double)alpha {
 	return ((alpha*180.0)/M_PI);	
@@ -115,6 +109,7 @@ NSString * const PTKInvalidTimeString = @"-----";
 
 //deree to radian
 -(double) DegreesToRadians:(double)alpha {
+    
 	return ((alpha*M_PI)/180.0);	
 }
 
@@ -203,10 +198,9 @@ NSString * const PTKInvalidTimeString = @"-----";
 		month += 12;
 	}
 	double A = floor(year/100.0);
-	
 	double B = 2 - A + floor(A/4.0);
 	
-	double JD = floor(365.25 * (year+ 4716)) + floor(30.6001 * (month + 1)) + day + B - 1524.5;
+	double JD = floor(365.25 * (year + 4716)) + floor(30.6001 * (month + 1)) + day + B - 1524.5;
 		
 	return JD;
 }
@@ -551,6 +545,13 @@ NSString * const PTKInvalidTimeString = @"-----";
 	}
 	
 	return times;
+}
+
+// range reduce hours to 0..23
+-(double) fixhour: (double) a {
+    a = a - 24.0 * floor(a / 24.0);
+    a = a < 0 ? (a + 24) : a;
+    return a;
 }
 
 // adjust times in a prayer time array

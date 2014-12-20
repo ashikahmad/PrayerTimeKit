@@ -28,33 +28,33 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 extern NSString * const PTKInvalidTimeString;
 
 typedef NS_ENUM(NSInteger, PTKCalculationMethod) {
-    PTKCalculationMethodJafari, // Ithna Ashari
+    PTKCalculationMethodJafari,  // Ithna Ashari
     PTKCalculationMethodKarachi, // University of Islamic Sciences, Karachi
-    PTKCalculationMethodISNA, // Islamic Society of North America (ISNA)
-    PTKCalculationMethodMWL, // Muslim World League (MWL)
-    PTKCalculationMethodMakkah, // Umm al-Qura, Makkah
-    PTKCalculationMethodEgypt, // Egyptian General Authority of Survey
-    PTKCalculationMethodTehran, // Institute of Geophysics, University of Tehran
-    PTKCalculationMethodCustom // Custom Setting
+    PTKCalculationMethodISNA,    // Islamic Society of North America (ISNA)
+    PTKCalculationMethodMWL,     // Muslim World League (MWL)
+    PTKCalculationMethodMakkah,  // Umm al-Qura, Makkah
+    PTKCalculationMethodEgypt,   // Egyptian General Authority of Survey
+    PTKCalculationMethodTehran,  // Institute of Geophysics, University of Tehran
+    PTKCalculationMethodCustom   // Custom Setting
 };
 
 typedef NS_ENUM(NSInteger, PTKJuristicMethod) {
     PTKJuristicMethodShafii, // Shafii (standard)
-    PTKJuristicMethodHanafi // Hanafi
+    PTKJuristicMethodHanafi  // Hanafi
 };
 
 typedef NS_ENUM(NSInteger, PTKHigherLatitudes) {
-    PTKHigherLatitudesNone, // No adjustment
-    PTKHigherLatitudesMidNight, // middle of night
+    PTKHigherLatitudesNone,       // No adjustment
+    PTKHigherLatitudesMidNight,   // middle of night
     PTKHigherLatitudesOneSeventh, // 1/7th of night
-    PTKHigherLatitudesAngleBased // angle/60th of night
+    PTKHigherLatitudesAngleBased  // angle/60th of night
 };
 
 typedef NS_ENUM (NSInteger, PTKTimeFormat) {
-    PTKTimeFormatTime24, // 24-hour format
+    PTKTimeFormatTime24,           // 24-hour format
     PTKTimeFormatTime12WithSuffix, // 12-hour format with suffix
-    PTKTimeFormatTime12NoSuffix, // 12-hour format with no suffix
-    PTKTimeFormatFloat // floating point number
+    PTKTimeFormatTime12NoSuffix,   // 12-hour format with no suffix
+    PTKTimeFormatFloat             // floating point number
 };
 
 @interface PrayTime : NSObject {
@@ -69,7 +69,7 @@ typedef NS_ENUM (NSInteger, PTKTimeFormat) {
 @property (assign) NSInteger numIterations;
 
 //------------------- Calc Method Parameters --------------------
-/*  this.methodParams[methodNum] = new Array(fa, ms, mv, is, iv);
+/*  self.methodParams[methodNum] = @[fa, ms, mv, is, iv];
  
  fa : fajr angle
  ms : maghrib selector (0 = angle; 1 = minutes after sunset)
@@ -77,16 +77,19 @@ typedef NS_ENUM (NSInteger, PTKTimeFormat) {
  is : isha selector (0 = angle; 1 = minutes after maghrib)
  iv : isha parameter value (in angle or minutes)
  */
-@property (strong, readonly) NSMutableDictionary *methodParams;
+@property (strong, readonly ) NSMutableDictionary  *methodParams;
 
-@property (strong, nonatomic) NSMutableArray *prayerTimesCurrent;
-@property (strong, nonatomic) NSMutableArray *offsets;
+@property (strong, nonatomic) NSMutableArray       *prayerTimesCurrent;
+@property (strong, nonatomic) NSMutableArray       *offsets;
 
 @property (assign, nonatomic) PTKCalculationMethod calcMethod;
 @property (assign, nonatomic) PTKJuristicMethod    asrJuristic;
-@property (assign, nonatomic) double               dhuhrMinutes;
 @property (assign, nonatomic) PTKHigherLatitudes   adjustHighLats;
+
 @property (assign, nonatomic) PTKTimeFormat        timeFormat;
+
+@property (assign, nonatomic) double               dhuhrMinutes;
+
 @property (assign, nonatomic) double               latitude;
 @property (assign, nonatomic) double               longitude;
 @property (assign, nonatomic) double               timeZone;
@@ -99,7 +102,7 @@ typedef NS_ENUM (NSInteger, PTKTimeFormat) {
 -(void)setFajrAngle:(double)angle;
 -(void)setMaghribAngle:(double)angle;
 -(void)setIshaAngle:(double)angle;
-//-(void)setDhuhrMinutes:(double)minutes;
+//-(void)setDhuhrMinutes:(double)minutes; // Available as property
 -(void)setMaghribMinutes:(double)minutes;
 -(void)setIshaMinutes:(double)minutes;
 
