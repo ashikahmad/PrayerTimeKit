@@ -42,7 +42,7 @@
     self.prayTime = [PrayTime new];
     self.prayTime.calcMethod = PTKCalculationMethodKarachi;
     self.prayTime.asrJuristic = PTKJuristicMethodHanafi;
-    self.prayTime.timeFormat = PTKTimeFormatTime12WithSuffix;
+    self.prayTime.timeFormat = PTKTimeFormatNSDate;
     [self refreshTimes:nil];
 }
 
@@ -61,9 +61,12 @@
                                       andLongitude:90.37
                                        andtimeZone:6];
     
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"hh:mm a"];
+    
     NSArray *labels = @[self.fajrDetails, self.sunriseDetails, self.dhuhrDetails, self.asrDetails, self.sunsetDetails, self.maghribDetails, self.ishaDetails];
     for (int i=0; i<labels.count; i++) {
-        ((UILabel *)labels[i]).text = times[i];
+        ((UILabel *)labels[i]).text = [formatter stringFromDate:times[i]];
     }
     NSLog(@"%@", times);
 }

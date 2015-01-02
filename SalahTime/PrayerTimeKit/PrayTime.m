@@ -27,13 +27,19 @@ PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
 
 NSString * const PTKInvalidTimeString = @"-----";
 
+
 @interface PrayTime ()
 
+@property (strong, nonatomic) NSCalendar *gregorianCalendar;
 
 @end
 
 @implementation PrayTime {
+    int calcYear;
+    int calcMonth;
+    int calcDay;
     double JDate;
+    
 }
 
 -(instancetype) init {
@@ -46,6 +52,8 @@ NSString * const PTKInvalidTimeString = @"-----";
         self.dhuhrMinutes   = 0;
         self.adjustHighLats = PTKHigherLatitudesMidNight;
         self.timeFormat     = PTKTimeFormatTime24;
+        
+        self.gregorianCalendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
 		
 		// Time Names
         _timeNames = @[@"Fajr", @"Sunrise", @"Dhuhr", @"Asr", @"Sunset", @"Maghrib", @"Isha"];
@@ -89,74 +97,6 @@ NSString * const PTKInvalidTimeString = @"-----";
 	return self;
 }
 
-//------------------------------------------------------
-#pragma mark - Trigonometric Functions
-//------------------------------------------------------
-
-// range reduce angle in degrees.
--(double) fixangle: (double) a {
-	
-	a = a - (360 * (floor(a / 360.0)));
-	
-	a = a < 0 ? (a + 360) : a;
-	return a;
-}
-
-// radian to degree
--(double) radiansToDegrees:(double)alpha {
-	return ((alpha*180.0)/M_PI);	
-}
-
-//deree to radian
--(double) DegreesToRadians:(double)alpha {
-    
-	return ((alpha*M_PI)/180.0);	
-}
-
-// degree sin
--(double)dsin: (double) d {
-	return (sin([self DegreesToRadians:d]));
-}
-
-// degree cos
--(double)dcos: (double) d {
-	return (cos([self DegreesToRadians:d]));
-}
-
-// degree tan
--(double)dtan: (double) d {
-	return (tan([self DegreesToRadians:d]));
-}
-
-// degree arcsin
--(double)darcsin: (double) x {
-	double val = asin(x);
-	return [self radiansToDegrees: val];
-}
-
-// degree arccos
--(double)darccos: (double) x {
-	double val = acos(x);
-	return [self radiansToDegrees: val];
-}
-
-// degree arctan
--(double)darctan: (double) x {
-	double val = atan(x);
-	return [self radiansToDegrees: val];
-}
-
-// degree arctan2
--(double)darctan2: (double)y andX: (double) x {
-	double val = atan2(y, x);
-	return [self radiansToDegrees: val];
-}
-
-// degree arccot
--(double)darccot: (double) x {
-	double val = atan2(1.0, x);
-	return [self radiansToDegrees: val];
-}
 
 //------------------------------------------------------
 #pragma mark - Time-Zone Functions
@@ -214,8 +154,7 @@ NSString * const PTKInvalidTimeString = @"-----";
 	//[components setWeekdayOrdinal:1]; // The first day in the month
 	[components setMonth:month]; // May
 	[components setYear:year];
-	NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-	NSDate *date1 = [gregorian dateFromComponents:components];
+	NSDate *date1 = [self.gregorianCalendar dateFromComponents:components];
 	
 	double ms = [date1 timeIntervalSince1970];// # of milliseconds since midnight Jan 1, 1970
 	double days = floor(ms/ (1000.0 * 60.0 * 60.0 * 24.0)); 
@@ -302,14 +241,18 @@ NSString * const PTKInvalidTimeString = @"-----";
 }
 
 //------------------------------------------------------
-#pragma mark - Interface(Public) Functions
+#pragma mark - Interface (Public) Functions
 //------------------------------------------------------
 
 // return prayer times for a given date
 -(NSMutableArray*)getDatePrayerTimes:(int)year andMonth:(int)month andDay:(int)day andLatitude:(double)latitude andLongitude:(double)longitude andtimeZone:(double)tZone {
-	self.latitude = latitude;
-	self.longitude = longitude;
+    self.latitude  = latitude;
+    self.longitude = longitude;
 	
+    calcYear  = year;
+    calcMonth = month;
+    calcDay   = day;
+    
 	//timeZone = this.effectiveTimeZone(year, month, day, timeZone); 
 	//timeZone = [self getTimeZone];
 	self.timeZone = tZone;
@@ -462,6 +405,22 @@ NSString * const PTKInvalidTimeString = @"-----";
 	return [self floatToTime12:time andnoSuffix:YES];
 }
 
+-(NSDate *) floatToNSDate:(double)time {
+    if (isnan(time)) return nil;
+    
+    time = [self fixhour:(time + 0.5/ 60.0)];  // add 0.5 minutes to round
+    int hours = floor(time);
+    double minutes = floor((time - hours) * 60.0);
+    
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    components.year = calcYear;
+    components.month = calcMonth;
+    components.day = calcDay;
+    components.hour = hours;
+    components.minute = minutes;
+    return [self.gregorianCalendar dateFromComponents:components];
+}
+
 //------------------------------------------------------
 #pragma mark - Compute Prayer Times
 //------------------------------------------------------
@@ -481,15 +440,14 @@ NSString * const PTKInvalidTimeString = @"-----";
 	double Maghrib = [self computeTime:[self.methodParams[@((int)self.calcMethod)][2] doubleValue] andTime: [t[5] doubleValue]];
 	double Isha    = [self computeTime:[self.methodParams[@((int)self.calcMethod)][4] doubleValue] andTime: [t[6] doubleValue]];
 	
-	NSMutableArray *Ctimes = [[NSMutableArray alloc] init];
-	[Ctimes addObject:@(Fajr)];
-	[Ctimes addObject:@(Sunrise)];
-	[Ctimes addObject:@(Dhuhr)];
-	[Ctimes addObject:@(Asr)];
-	[Ctimes addObject:@(Sunset)];
-	[Ctimes addObject:@(Maghrib)];
-	[Ctimes addObject:@(Isha)];
-	
+    NSMutableArray *Ctimes = [@[@(Fajr),
+                                @(Sunrise),
+                                @(Dhuhr),
+                                @(Asr),
+                                @(Sunset),
+                                @(Maghrib),
+                                @(Isha)] mutableCopy];
+    
 	//Tune times here
 	//Ctimes = [self tuneTimes:Ctimes];
 	
@@ -498,11 +456,13 @@ NSString * const PTKInvalidTimeString = @"-----";
 
 // compute prayer times at given julian date
 -(NSMutableArray*)computeDayTimes {
-	
+    static NSArray *defaultTimes;
+    if(!defaultTimes) defaultTimes = @[@5.0, @6.0, @12.0, @13.0, @18.0, @18.0, @18.0];
+    
 	//int i = 0;
 	NSMutableArray *t1, *t2, *t3;
     //default times
-	NSMutableArray *times = [@[@5.0, @6.0, @12.0, @13.0, @18.0, @18.0, @18.0] mutableCopy];
+	NSMutableArray *times = [defaultTimes mutableCopy];
     
 	for (int i=1; i<= self.numIterations; i++)
 		t1 = [self computeTimes:times];
@@ -606,10 +566,12 @@ NSString * const PTKInvalidTimeString = @"-----";
 		else if (self.timeFormat == PTKTimeFormatTime12NoSuffix){
 			times[i] = [self floatToTime12:[times[i] doubleValue] andnoSuffix:YES];
 		}
-		else{
-			
+		else if (self.timeFormat == PTKTimeFormatTime24){
 			times[i] = [self floatToTime24:[times[i] doubleValue]];
-		}
+        } else {
+            // floatToNSDate can return nil, if time is invalid
+            times[i] = [self floatToNSDate:[times[i] doubleValue]] ?: [NSNull null];
+        }
 	}
 	return times;
 }
@@ -684,6 +646,73 @@ NSString * const PTKInvalidTimeString = @"-----";
 		
 	}
 	return times;
+}
+
+//------------------------------------------------------
+#pragma mark - Trigonometric Functions
+//------------------------------------------------------
+
+// range reduce angle in degrees.
+-(double) fixangle: (double) a {
+    a = a - (360 * (floor(a / 360.0)));
+    a = a < 0 ? (a + 360) : a;
+    return a;
+}
+
+// radian to degree
+-(double) radiansToDegrees:(double)alpha {
+    return ((alpha*180.0)/M_PI);
+}
+
+//deree to radian
+-(double) DegreesToRadians:(double)alpha {
+    
+    return ((alpha*M_PI)/180.0);
+}
+
+// degree sin
+-(double)dsin: (double) d {
+    return (sin([self DegreesToRadians:d]));
+}
+
+// degree cos
+-(double)dcos: (double) d {
+    return (cos([self DegreesToRadians:d]));
+}
+
+// degree tan
+-(double)dtan: (double) d {
+    return (tan([self DegreesToRadians:d]));
+}
+
+// degree arcsin
+-(double)darcsin: (double) x {
+    double val = asin(x);
+    return [self radiansToDegrees: val];
+}
+
+// degree arccos
+-(double)darccos: (double) x {
+    double val = acos(x);
+    return [self radiansToDegrees: val];
+}
+
+// degree arctan
+-(double)darctan: (double) x {
+    double val = atan(x);
+    return [self radiansToDegrees: val];
+}
+
+// degree arctan2
+-(double)darctan2: (double)y andX: (double) x {
+    double val = atan2(y, x);
+    return [self radiansToDegrees: val];
+}
+
+// degree arccot
+-(double)darccot: (double) x {
+    double val = atan2(1.0, x);
+    return [self radiansToDegrees: val];
 }
 
 @end

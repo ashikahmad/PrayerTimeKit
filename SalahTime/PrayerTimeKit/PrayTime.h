@@ -1,10 +1,11 @@
 //--------------------- Copyright Block ----------------------
 /* 
 
-PrayTime.h: Prayer Times Calculator (ver 1.2)
+PrayTime.h: Prayer Times Calculator (ver 1.3)
 Copyright (C) 2007-2010 PrayTimes.org
 
-Objective C Code By: Hussain Ali Khan
+Objective C Code By: Ashik uddin Ahmad
+Objective C Core By: Hussain Ali Khan
 Original JS Code By: Hamid Zarrabi-Zadeh
 
 License: GNU LGPL v3.0
@@ -54,7 +55,8 @@ typedef NS_ENUM (NSInteger, PTKTimeFormat) {
     PTKTimeFormatTime24,           // 24-hour format
     PTKTimeFormatTime12WithSuffix, // 12-hour format with suffix
     PTKTimeFormatTime12NoSuffix,   // 12-hour format with no suffix
-    PTKTimeFormatFloat             // floating point number
+    PTKTimeFormatFloat,            // floating point number
+    PTKTimeFormatNSDate
 };
 
 @interface PrayTime : NSObject {
